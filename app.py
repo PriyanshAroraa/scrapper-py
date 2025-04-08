@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from search import get_search_results
 from scraper import scrape_all_urls
 from summarizer import summarize_content
@@ -23,14 +23,13 @@ def index():
 def loading():
     return render_template("loading.html")
 
-@app.route('/results')
-def results():
-    topic = session.get('topic', '')
-    if not topic:
-        return redirect(url_for('index'))
+@app.route('/generate', methods=['POST'])
+def generate():
+    topic = request.json.get('topic')
+    session['topic'] = topic
 
     # Step 1: Get search → scrape → summarize
-    urls = get_search_results(topic, max_results=5)
+    urls = get_search_results(topic, max_results=10)
     scraped_data = scrape_all_urls(urls)
     summary = summarize_content(scraped_data)
 
@@ -66,10 +65,22 @@ def results():
             insights.append(line.lstrip("1234.-• "))
 
     # Step 3: Convert each section to HTML using markdown
-    summary_html = markdown.markdown(" ".join(summary_intro))
-    trends_html = markdown.markdown("\n".join(f"- {t}" for t in key_trends))
-    competitors_html = markdown.markdown("\n".join(f"- {c}" for c in competitors))
-    insights_html = markdown.markdown("\n".join(f"- {i}" for i in insights))
+    session['summary_html'] = markdown.markdown(" ".join(summary_intro))
+    session['trends_html'] = markdown.markdown("\n".join(f"- {t}" for t in key_trends))
+    session['competitors_html'] = markdown.markdown("\n".join(f"- {c}" for c in competitors))
+    session['insights_html'] = markdown.markdown("\n".join(f"- {i}" for i in insights))
+
+    return jsonify({"status": "ok"})
+
+@app.route('/results')
+def results():
+    summary_html = session.get('summary_html', '')
+    trends_html = session.get('trends_html', '')
+    competitors_html = session.get('competitors_html', '')
+    insights_html = session.get('insights_html', '')
+
+    if not summary_html:
+        return redirect(url_for('index'))
 
     return render_template(
         "results.html",
