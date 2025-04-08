@@ -33,7 +33,7 @@ def generate():
     scraped_data = scrape_all_urls(urls)
     summary = summarize_content(scraped_data)
 
-    # Process summary into sections
+    # Step 2: Split into sections
     lines = summary.split('\n')
     summary_intro = []
     key_trends = []
@@ -64,17 +64,28 @@ def generate():
         elif current_section == "insights":
             insights.append(line.lstrip("1234.-• "))
 
-    # After this, the results page will display the summaries
-    return redirect(url_for('results'))  # Ensure it's redirected after processing
+    # Store the results in session
+    session['summary_intro'] = " ".join(summary_intro)
+    session['key_trends'] = key_trends
+    session['competitors'] = competitors
+    session['insights'] = insights
+
+    # Redirect to results page
+    return redirect(url_for('results'))
 
 @app.route('/results')
 def results():
-    topic = session.get('topic', '')
-    if not topic:
+    # Get the results from the session
+    summary_intro = session.get('summary_intro', '')
+    key_trends = session.get('key_trends', [])
+    competitors = session.get('competitors', [])
+    insights = session.get('insights', [])
+
+    if not summary_intro:
         return redirect(url_for('index'))
 
-    # Fetch and render results from session
-    summary_html = markdown.markdown(" ".join(summary_intro))
+    # Convert to HTML
+    summary_html = markdown.markdown(summary_intro)
     trends_html = markdown.markdown("\n".join(f"- {t}" for t in key_trends))
     competitors_html = markdown.markdown("\n".join(f"- {c}" for c in competitors))
     insights_html = markdown.markdown("\n".join(f"- {i}" for i in insights))
