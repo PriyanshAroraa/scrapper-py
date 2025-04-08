@@ -23,6 +23,8 @@ def index():
 def loading():
     return render_template("loading.html")
 
+
+
 @app.route('/generate', methods=['POST'])
 def generate():
     topic = request.json.get('topic')
