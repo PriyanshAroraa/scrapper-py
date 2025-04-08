@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
+app.secret_key = os.getenv("SECRET_KEY")  # Set your secret key in the .env file
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -30,7 +30,7 @@ def results():
         return redirect(url_for('index'))
 
     # Step 1: Get search → scrape → summarize
-    urls = get_search_results(topic, max_results=5)
+    urls = get_search_results(topic, max_results=10)
     scraped_data = scrape_all_urls(urls)
     summary = summarize_content(scraped_data)
 
