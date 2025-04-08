@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")  # Set your secret key in the .env file
+app.secret_key = os.getenv("SECRET_KEY", "fallback-secret")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -23,18 +23,17 @@ def index():
 def loading():
     return render_template("loading.html")
 
-@app.route('/results')
-def results():
-    topic = session.get('topic', '')
-    if not topic:
-        return redirect(url_for('index'))
+@app.route('/generate', methods=['POST'])
+def generate():
+    topic = request.json.get('topic')
+    session['topic'] = topic
 
     # Step 1: Get search → scrape → summarize
     urls = get_search_results(topic, max_results=10)
     scraped_data = scrape_all_urls(urls)
     summary = summarize_content(scraped_data)
 
-    # Step 2: Split into sections
+    # Process summary into sections
     lines = summary.split('\n')
     summary_intro = []
     key_trends = []
@@ -65,7 +64,16 @@ def results():
         elif current_section == "insights":
             insights.append(line.lstrip("1234.-• "))
 
-    # Step 3: Convert each section to HTML using markdown
+    # After this, the results page will display the summaries
+    return redirect(url_for('results'))  # Ensure it's redirected after processing
+
+@app.route('/results')
+def results():
+    topic = session.get('topic', '')
+    if not topic:
+        return redirect(url_for('index'))
+
+    # Fetch and render results from session
     summary_html = markdown.markdown(" ".join(summary_intro))
     trends_html = markdown.markdown("\n".join(f"- {t}" for t in key_trends))
     competitors_html = markdown.markdown("\n".join(f"- {c}" for c in competitors))
