@@ -2,7 +2,9 @@ flask
 requests
 beautifulsoup4
 openai
-langchain
 python-dotenv
 httpx
 tqdm
+langchain-community==0.3.21
+langchain==0.3.23
+
