@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Business Research Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center px-4">
+  <div class="max-w-2xl w-full text-center">
+    <h1 class="text-4xl font-bold text-gray-800 mb-6">AI Business Research Assistant</h1>
+    <p class="text-gray-600 mb-8">Enter any product, market or company idea and get instant structured research backed by BotWot.</p>
+    
+    <form id="research-form" class="flex flex-col gap-4">
+      <input type="text" id="topic" name="topic" required placeholder="e.g. biodegradable bottle manufacturing" class="px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+      <button type="submit" class="bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">Generate Report</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('research-form').addEventListener('submit', async function(e) {
+      e.preventDefault(); // prevent default form submission
+      const topic = document.getElementById('topic').value;
+
+      // Go to loading page immediately
+      window.location.href = "/loading";
+
+      // Trigger the background generation on the server
+      await fetch('/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic })
+      });
+    });
+  </script>
+</body>
+</html>
