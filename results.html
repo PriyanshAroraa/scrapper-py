@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Research Summary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 px-6 py-10">
+  <div class="max-w-4xl mx-auto space-y-12 text-gray-800 prose lg:prose-xl">
+
+    <section>
+      <h2 class="text-blue-600 text-2xl font-bold">📌 Executive Summary</h2>
+      {{ summary_html | safe }}
+    </section>
+
+    <section>
+      <h2 class="text-green-600 text-2xl font-bold">📈 Key Trends</h2>
+      {{ trends_html | safe }}
+    </section>
+
+    <section>
+      <h2 class="text-purple-600 text-2xl font-bold">🏢 Competitors</h2>
+      {{ competitors_html | safe }}
+    </section>
+
+    <section>
+      <h2 class="text-yellow-600 text-2xl font-bold">💡 Insights</h2>
+      {{ insights_html | safe }}
+    </section>
+
+    <div class="pt-6 text-center">
+      <a href="/" class="text-blue-700 hover:underline text-lg font-medium">&larr; Start New Research</a>
+    </div>
+
+  </div>
+</body>
+</html>

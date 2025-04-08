@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Processing Research...</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    const steps = [
+      "🔍 Gathering search results...",
+      "🕸 Crawling and scraping web pages...",
+      "🧠 Summarizing using BotWot Intelligence...",
+      "✅ Finalizing your report..."
+    ];
+    let current = 0;
+
+    function nextStep() {
+      if (current < steps.length) {
+        document.getElementById("loader-step").textContent = steps[current++];
+        setTimeout(nextStep, 3500);
+      } else {
+        window.location.href = "/results";
+      }
+    }
+
+    window.onload = nextStep;
+  </script>
+</head>
+<body class="bg-white min-h-screen flex items-center justify-center px-4">
+  <div class="text-center">
+    <div class="mb-6">
+      <h1 id="loader-step" class="text-xl font-semibold text-blue-600 animate-pulse">Starting...</h1>
+    </div>
+    <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+    <p class="mt-6 text-gray-500 text-sm">Hang tight! Your intelligent research report is being prepared.</p>
+  </div>
+</body>
+</html>
